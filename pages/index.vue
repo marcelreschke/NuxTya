@@ -1,11 +1,26 @@
 <script setup lang="ts">
-	import { useCounterStore } from "@/stores/counter"; // You can make stores in the stores folder
-	const store = useCounterStore(); // Use the store
-	const colorMode = useColorMode(); // Use color mode provided by nuxt-color-mode
+	import { useCounterStore } from "@/stores/counter";
+	const store = useCounterStore();
+	const colorMode = useColorMode();
 	const toggleColorMode = () => (colorMode.preference = colorMode.preference === "dark" ? "light" : "dark");
-	const title = ref<NuxtTya>({ msg: "NuxTya" }); // Global interface and types can be found in the types folder
-	const { data: serverMsg, error, pending } = await useFetch("/api/hello"); // Fetch data from the server
-	const { data: supabaseData, error: supabaseError} = await useFetch("/api/database") // Fetch data from the database
+	const title = ref<NuxtTya>({ msg: "NuxTya" });
+	const { data: serverMsg, error, pending } = await useFetch("/api/hello");
+	const supabase = useSupabaseClient();
+	const user = useSupabaseUser();
+
+	const { data: supabaseData, error: supabaseError } = await useAsyncData('supabaseData', async () => {
+		if (!user.value) return null
+		const { data, error } = await supabase.from('my_table').select('*')
+		if (error) throw error
+		return data
+	})
+
+	const handleLogout = async () => {
+		const { error } = await supabase.auth.signOut()
+		if (error) console.error('Error logging out:', error)
+		else navigateTo('/login')
+	}
+
 	onMounted(() => {
 		if (error.value) {
 			title.value = { msg: "Error" };
@@ -62,8 +77,14 @@
 			</div>
 			<!-- Display data from Supabase -->
 			<h2 class="text-2xl m-5 font-bold">Supabase</h2>
-			<div class="text-center m-5 overflow-y-auto overflow-x-hidden max-w-[500px] max-h-[300px]">
+			<div v-if="user" class="text-center m-5 overflow-y-auto overflow-x-hidden max-w-[500px] max-h-[300px]">
 				{{ supabaseData }}
+				<Button class="mt-4" @click="handleLogout">Logout</Button>
+			</div>
+			<div v-else class="text-center m-5">
+				<NuxtLink to="/login">
+					<Button>Login</Button>
+				</NuxtLink>
 			</div>
 		</div>
 	</main>
