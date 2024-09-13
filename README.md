@@ -1,4 +1,3 @@
-
 # TailormadeWP Nuxt Boilerplate
 A no-nonsense minimal starter template for Nuxt 3 that prioritizes a clean and customizable base for your projects.
 
@@ -11,3 +10,4 @@ A no-nonsense minimal starter template for Nuxt 3 that prioritizes a clean and c
 -   **💾 Supabase:** The Backend is Supabase
 -   **🔐 Nuxt/Supabase:** Nuxt module for first class integration with Supabase (Vue 3 composables, Usage in API server routes, Authentication)
 -   **🧑‍🔬 Vitest:** A testing framework for Nuxt applications.
+-   **🥯 Bun:** Bun is a fast JavaScript all-in-one toolkit for developing, testing, runing, and bundling JavaScript & TypeScript projects
